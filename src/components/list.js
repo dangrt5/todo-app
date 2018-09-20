@@ -1,16 +1,13 @@
-import React from "react";
-import Item from "./item";
+import React from 'react';
+import Item from './item';
 
-const List = (props) => {
-    const listElement = props.data.map((item, index) => {
-      return <Item key={item._id} index={item} delete={() => props.delete(index)}/>
-    });
-
-    return (
-      <ul className="collection">
-        {listElement}
-      </ul>
-    );
+export default props => {
+  const listElements = props.data.map((item, index)=>{
+    return <Item key={item._id} item={item} index={index} delete={props.delete}/>
+  })
+  return(
+    <ul className="collection">
+      {listElements}
+    </ul>
+  )
 }
-
-export default List;
