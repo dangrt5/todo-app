@@ -30,6 +30,17 @@ class App extends Component {
     })
   }
 
+  deleteItem = (index) => {
+    const {list} = this.state;
+    const listCopy = list.slice();
+    listCopy.splice(index,1);
+
+    this.setState({
+      list: listCopy
+    });
+  }
+
+
   render() {
     const {list} = this.state;
     return (
