@@ -12,7 +12,7 @@ class AddItem extends Component {
     this.setState({
       title: "",
       details: ""
-    })
+    });
   }
 
 
