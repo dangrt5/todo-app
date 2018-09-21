@@ -1,53 +1,75 @@
 import "materialize-css/dist/css/materialize.min.css";
 import React, {Component} from 'react';
+import axios from "axios";
 import List from "./list";
-import AddItem from "./add-item"
-import dummyListData from "../dummy-data/list-data"
+import AddItem from "./add-item";
+import dummyListData from "../dummy-data/list-data";
+
+const BASE_URL = "http://api.reactprototypes.com";
+const API_KEY = "?key=rvndydvng"
 
 class App extends Component {
   state = {
-    list: []
+    list: [],
+    error: ""
   }
 
   componentDidMount() {
     this.getListData();
   }
 
-  getListData() {
+  async getListData() {
       // Call server to get data
+      // http://api.reactprototypes.com/todos?key=somekey
 
-      this.setState({
-        list: dummyListData
-      });
+      try {
+        const response = await axios.get(`${BASE_URL}/todos${API_KEY}`);
+        this.setState({
+          list: response.data.todos
+        });
+      } catch(error) {
+          this.setState({
+            error: "Error retrieving list data"
+          })
+        }
+
+
+            // const response = axios.get(`${BASE_URL}/todos${API_KEY}`).then((response) => {
+      //   this.setState({
+      //     list: response.data.todos
+      //   });
+      // }).catch((err) => {
+      //   console.log("Add Item Error", err.message);
+      //   this.setState({
+      //     error: `Error retrieving list data`
+      //   })
+      // })
+
+
 
   }
 
-  addItem(item) {
-    item._id = new Date().getTime();
-
-    this.setState({
-      list: [item, ...this.state.list]
-    })
+  async addItem(item) {
+    await axios.post(`${BASE_URL}/todos${API_KEY}`, item);
+    this.getListData();
   }
 
-  deleteItem = (index) => {
-    const {list} = this.state;
-    const listCopy = list.slice();
-    listCopy.splice(index,1);
-
-    this.setState({
-      list: listCopy
-    });
+  deleteItem = async (id) => {
+    console.log("Delete item ID:", id);
+    await axios.delete(`${BASE_URL}/todos/${id + API_KEY}`);
+    this.getListData();
   }
 
 
   render() {
-    const {list} = this.state;
+    const {list, error} = this.state;
+    console.log("List", list)
     return (
         <div className="container">
           <h1 className="center">To Do App</h1>
           <AddItem add={this.addItem.bind(this)}/>
-          <List data={list}/>
+          <p className="red-text">{error}</p>
+          <List data={list} delete={this.deleteItem}/>
         </div>
       )
   }
